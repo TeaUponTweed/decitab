@@ -2,13 +2,12 @@ chrome.tabs.onCreated.addListener((newTab) => {
   chrome.tabs.query({windowType:'normal'}, function(tabs) {
     currentWindowTabCount = 0;
     tabs.map((tab) => {
-      if (tab.windowId == newTab.windowId) {
+      if ((tab.windowId == newTab.windowId) && (!tab.pinned)) {
         currentWindowTabCount += 1
       }
     })
     if (currentWindowTabCount > 10) {
       chrome.tabs.remove(newTab.id, () => {
-        console.log('ere');
         chrome.notifications.create(
         "test", {
             type: 'basic',
@@ -17,7 +16,7 @@ chrome.tabs.onCreated.addListener((newTab) => {
             message: 'Close some. For all our sanity.',
             priority: 2,
             requireInteraction: false,
-        }, () => console.log("sad"))
+        }, () => console.log("Too many tabs!"))
       });
     }
   });
